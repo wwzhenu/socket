@@ -18,11 +18,19 @@ do{
     $get=socket_accept($socket);
     if ($get!==FALSE){
         echo 'create a connection '.PHP_EOL;
-        $data=socket_read($get,200);
-        $data=json_decode($data,TRUE);
-        echo 'receive message from '.$data['name'].'.he says '.$data['message'].' to '.$data['to'].PHP_EOL;
-        socket_write($get,'welcome'.$data['name'],7);
-        socket_close($get);
+        $data=socket_read($get,10000);
+        preg_match("/Sec-WebSocket-Key: (.*)\r\n/", $data, $match);
+        $key=$match[1];
+        $acceptKey=base64_encode(sha1($key.'258EAFA5-E914-47DA-95CA-C5AB0DC85B11',true));
+        $in = "HTTP/1.1 101 Switching Protocols\r\n" .
+            "Upgrade: websocket\r\n" .
+            "Connection: Upgrade\r\n" .
+            "Sec-WebSocket-Accept: " . $acceptKey . "\r\n" .
+            "\r\n";
+        //$data=json_decode($data,TRUE);
+        //echo 'receive message from '.$data['name'].'.he says '.$data['message'].' to '.$data['to'].PHP_EOL;
+        socket_write($get,$in,strlen($in));
+        //socket_close($get);
     }
 }while(TRUE);
 socket_close($socket);

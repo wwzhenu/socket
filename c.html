@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>socket</title>
+    <script type="application/javascript">
+        var ws;
+        function connectSocket(){
+            ws=new WebSocket('ws://127.0.0.1:8888');
+            ws.onopen=function (event) {
+                alert('connect success') ;
+            };
+            ws.onerror=function (event) {
+                alert('connect fail');
+            };
+            ws.onclose=function () {
+                alert('connect close');
+            };
+            ws.onmessage=function (event) {
+                alert(event.data);
+            };
+        }
+
+    </script>
+</head>
+<body>
+<textarea name="" id="content" cols="30" rows="10"></textarea>
+<input type="button" value="连接服务器" onclick="connectSocket()"><br>
+<input type="text" name="" id="name">输入名字<br>
+<input type="button" value="发送">
+</body>
+</html>
