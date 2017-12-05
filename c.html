@@ -21,8 +21,9 @@
             };
             ws.onmessage = function (evt)
             {
+                alert('receive msg');
                 var received_msg = evt.data;
-                alert("数据已接收...");
+                addContent(received_msg);
             };
         }
         function sendM() {

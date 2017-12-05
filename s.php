@@ -44,11 +44,9 @@ do {
             continue;
         }
         foreach ($read as $soc) {
-            $data = socket_read($soc, 10000);
+            $data = socket_read($soc, 1500);
             echo 'receive message' . PHP_EOL;
             if ($data === FALSE) {
-                $key = array_search($soc, $clients);
-                unset($clients[$key]);
                 $key = array_search($soc, $read);
                 unset($read[$key]);
                 continue;
@@ -57,13 +55,15 @@ do {
                     if ($w != $soc){
                         echo 'send message '.PHP_EOL;
                         $a = str_split($data, 125);
-                        if (count($a) == 1) {
-                            return "\x81" . chr(strlen($a[0])) . $a[0];
-                        }
                         $ns = "";
-                        foreach ($a as $o) {
-                            $ns .= "\x81" . chr(strlen($o)) . $o;
+                        if (count($a) == 1) {
+                            $ns= "\x81" . chr(strlen($a[0])) . $a[0];
+                        }else{
+                            foreach ($a as $o) {
+                                $ns .= "\x81" . chr(strlen($o)) . $o;
+                            }
                         }
+                        echo $ns.PHP_EOL;
                         if(socket_write($w, $ns, strlen($ns))===FALSE)
                             echo 'send fail';
                     }
