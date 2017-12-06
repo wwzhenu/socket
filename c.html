@@ -21,7 +21,6 @@
             };
             ws.onmessage = function (evt)
             {
-                alert('receive msg');
                 var received_msg = evt.data;
                 addContent(received_msg);
             };
@@ -33,7 +32,6 @@
                 message=document.getElementById('message');
                 addContent("我说"+message.value);
                 try{
-                    alert(ws.readyState);
                     ws.send(message.value);
                     console.log('send success');
                 }catch(e){
