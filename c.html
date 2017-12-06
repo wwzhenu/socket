@@ -27,22 +27,29 @@
             };
         }
         function sendM() {
-            message=document.getElementById('message');
-            addContent("我说"+message.value);
-            try{
-                alert(ws.readyState);
-                ws.send(message.value);
-                console.log('send success');
-            }catch(e){
-                console.log(e.message);
+            if (ws.readyState!=1)
+                alert('请重新链接服务器');
+            else{
+                message=document.getElementById('message');
+                addContent("我说"+message.value);
+                try{
+                    alert(ws.readyState);
+                    ws.send(message.value);
+                    console.log('send success');
+                }catch(e){
+                    console.log(e.message);
+                }
             }
         }
         function disConnect() {
-            ws.close(1000,'close');
+            ws.close();
         }
         function addContent(data){
             content=document.getElementById('content');
             content.value=content.value+"\r\n"+data;
+        }
+        function socketClose() {
+            ws.close(1001);
         }
     </script>
 </head>
@@ -52,6 +59,6 @@
 <input type="text" name="" id="name">输入名字<br>
 <input type="text" name="" id="message"><input type="button" value="发送" onclick="sendM()">
 <input type="button" value="断开" onclick="disConnect()">
-<input type="button" value="测试" onclick="addContent('123123123')">
+<input type="button" value="测试" onclick="socketClose()">
 </body>
 </html>

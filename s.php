@@ -19,7 +19,7 @@ $read = [$socket];
 $write = [];
 $clients = [];
 do {
-    echo 'serve num ' . count($clients) . PHP_EOL;
+    echo 'client num ' . count($clients) . PHP_EOL;
     array_unshift($read, $socket);
     $read=array_merge($read,$clients);
     $listen = socket_select($read, $write, $except, NULL);
@@ -41,31 +41,47 @@ do {
             }
             $key = array_search($socket, $read);
             unset($read[$key]);
-            continue;
         }
-        foreach ($read as $soc) {
-            $data = socket_read($soc, 1500);
-            echo 'receive message' . PHP_EOL;
-            if ($data === FALSE) {
-                $key = array_search($soc, $read);
-                unset($read[$key]);
-                continue;
-            } else {
-                foreach ($clients as $w) {
-                    if ($w != $soc){
-                        echo 'send message '.PHP_EOL;
-                        $a = str_split($data, 125);
-                        $ns = "";
-                        if (count($a) == 1) {
-                            $ns= "\x81" . chr(strlen($a[0])) . $a[0];
-                        }else{
-                            foreach ($a as $o) {
-                                $ns .= "\x81" . chr(strlen($o)) . $o;
+        if (count($clients)>1){
+            foreach ($read as $soc) {
+                $data = socket_read($soc, 1500);
+                echo 'receive message' . PHP_EOL;
+                if (strlen($data)<7){
+                    echo strlen($data).PHP_EOL;
+                    socket_close($soc);
+                    continue;
+                }
+                if ($data === FALSE) {
+                    echo 'data invalid'.PHP_EOL;
+                    $key = array_search($soc, $read);
+                    unset($read[$key]);
+                    continue;
+                } else {
+                    if (strlen($data)<7){
+                        echo strlen($data).PHP_EOL;
+                        continue;
+                    }else{
+                        echo 'ready to send message'.PHP_EOL;
+                        echo 'send to socket num ' . count($clients) . PHP_EOL;
+                        if (count($clients)>1){
+                            foreach ($clients as $w) {
+                                if ($w != $soc){
+                                    echo 'send message '.PHP_EOL;
+                                    $a = str_split($data, 125);
+                                    $ns = "";
+                                    if (count($a) == 1) {
+                                        $ns= "\x81" . chr(strlen($a[0])) . $a[0];
+                                    }else{
+                                        foreach ($a as $o) {
+                                            $ns .= "\x81" . chr(strlen($o)) . $o;
+                                        }
+                                    }
+                                    echo $ns.PHP_EOL;
+                                    if(socket_write($w, $ns, strlen($ns))===FALSE)
+                                        echo 'send fail';
+                                }
                             }
                         }
-                        echo $ns.PHP_EOL;
-                        if(socket_write($w, $ns, strlen($ns))===FALSE)
-                            echo 'send fail';
                     }
                 }
             }
