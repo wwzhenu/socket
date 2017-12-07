@@ -4,28 +4,34 @@
  * User: wangwenzeng
  * Date: 2017/12/6
  * Time: 14:13
- * 单机实验
+ * websocket例子服务器端
  */
+#创建socket
 $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
 if ($socket === FALSE)
     die('socket_create fail');
 $ip = '127.0.0.1';
 $port = 8888;
+#绑定socket到ip:port
 if (socket_bind($socket, $ip, $port) === FALSE)
     die('socket_bind fail');
+#监听socket
 if (socket_listen($socket, 4) === FALSE)
     die('socket_listen fail');
 $client = [];
 do {
     echo 'waiting for change' . PHP_EOL;
+    #初始化监听socket
     $read[] = $socket;
     $read=array_merge($read,$client);
     $read=array_unique($read);
+    #选择出有变动的socket
     socket_select($read, $write, $expect, null);
     if (in_array($socket,$read)) {
         echo 'a new connection ' . PHP_EOL;
         $get = socket_accept($socket);
         $data = socket_read($get, 10000);
+        #进行握手
         preg_match("/Sec-WebSocket-Key: (.*)\r\n/", $data, $match);
         $key = $match[1];
         $acceptKey = base64_encode(sha1($key . '258EAFA5-E914-47DA-95CA-C5AB0DC85B11', true));
@@ -42,6 +48,7 @@ do {
             echo 'a new message ' . PHP_EOL;
             socket_recv($sock, $data, 1000, 0);
             echo 'message strlen ' . strlen($data) . PHP_EOL;
+            #长度小于7为断开连接
             if (strlen($data) < 7) {
                 echo 'close connection' . PHP_EOL;
                 unset($read[array_search($sock, $read)]);
