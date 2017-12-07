@@ -40,22 +40,45 @@ do {
     } else {
         foreach ($read as $sock) {
             echo 'a new message ' . PHP_EOL;
-            //$data=socket_read($sock,50);
             socket_recv($sock, $data, 1000, 0);
             echo 'message strlen ' . strlen($data) . PHP_EOL;
             if (strlen($data) < 7) {
                 echo 'close connection' . PHP_EOL;
                 unset($read[array_search($sock, $read)]);
                 socket_close($sock);
+                if (count($client>1)){
+                    foreach ($client as $w) {
+                        if ($w != $sock){
+                            $data=array_search($sock,$client)."已离开";
+                            $data=json_encode(['message'=>$data,'type'=>'info']);
+                            socket_write($w, mask($data));
+                        }
+
+                    }
+                }
             } else {
-                echo 'message:' . decode($data) . PHP_EOL;
+                $data=decode($data);
+                echo 'message:' . ($data) . PHP_EOL;
                 echo 'send message to other clients,clients num is ' . (count($client) - 1) . PHP_EOL;
+                $str=json_decode($data,true);
+                if ($str['type']=='add'){
+                    $key=array_search($sock,$client);
+                    if ($key!==false){
+                        $client[$str['from']]=$client[$key];
+                        unset($client[$key]);
+                    }
+                }
                 if (count($client) < 2) {
                     echo 'no other available client' . PHP_EOL;
                 } else {
-                    foreach ($client as $w) {
+                    foreach ($client as $wk=>$w) {
+                        if ($str['type']=='message' && $str['to']!='all'){
+                            $receiver=explode(',',$str['to']);
+                            if (!in_array($wk,$receiver))
+                                continue;
+                        }
                         if ($w != $sock)
-                            socket_write($w, mask(decode($data)));
+                            socket_write($w, mask($data));
                     }
                 }
             }

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>socket</title>
+    <script type="application/javascript">
+        var ws;
+        var content;
+        var message;
+        var userName;
+        var receiver=new Array('all');
+        function connectSocket(){
+            ws=new WebSocket('ws://127.0.0.1:8888');
+            ws.onopen=function () {
+                addContent('connect success');
+                console.log('connect success');
+            };
+            ws.onerror=function (event) {
+                alert('connect fail');
+            };
+            ws.onclose=function () {
+                addContent('connect close');
+            };
+            ws.onmessage = function (evt)
+            {
+                var received_msg = evt.data;
+                received_msg=JSON.parse(received_msg);
+                if(received_msg.type=='add'){
+                    addUser(received_msg.from);
+                    addContent(received_msg.from+"已加入聊天");
+                }else if(received_msg.type=='message'){
+                    addContent(received_msg.from+"对我说:"+received_msg.message);
+                }else if(received_msg.type=='info'){
+                    addContent(received_msg.message);
+                }
+            };
+        }
+        function sendM(type) {
+            type=type|| 'message';
+            userName=document.getElementById('userName');
+            if(!userName.value){
+                alert('请输入一个名字');
+                return;
+            }
+            if (typeof(ws)=="undefined" || ws.readyState!=1)
+                alert('请重新链接服务器');
+            else{
+                message=document.getElementById('message');
+                var receiverUsers=receiver.join(',');
+                try{
+                    var data='{"from":"'+userName.value+'","to":"'+receiverUsers+'","message":"'+message.value+'","type":"'+type+'"}';
+                    ws.send(data);
+                    console.log('send success,message:'+data);
+                    if (receiverUsers=='all')
+                        receiverUsers='所有人';
+                    if (type=='message')
+                        addContent("我对"+receiverUsers+"说:"+message.value);
+                }catch(e){
+                    console.log(e.message);
+                }
+            }
+        }
+        function disConnect() {
+            ws.close();
+        }
+        function addContent(data){
+            content=document.getElementById('content');
+            content.value=content.value+"\r\n"+data;
+        }
+        function socketClose() {
+            ws.close(1001);
+        }
+        function sendName() {
+            userName=document.getElementById('userName');
+            if(!userName.value){
+                alert('请输入一个名字');
+                return;
+            }
+            sendM('add');
+        }
+        function setReceiver(data){
+            receiver=data;
+        }
+        function addUser(userName){
+            if(userName=='all'){
+                receiver.splice(0,receiver.length);
+                receiver.push(userName);
+                document.getElementById('all').value='已选择大家';
+                return;
+            }else{
+                var userList=document.getElementById('userList');
+                var newNode=document.createElement('input');
+                newNode.type='button';
+                newNode.value=userName;
+                newNode.text='';
+                newNode.onclick=function () {
+                    var key=receiver.indexOf('all');
+                    if(key!=-1){
+                        receiver.splice(key,1);
+                    }
+                    document.getElementById('all').value='大家';
+                    if (this.text==""){
+                        this.value='已选择'+userName;
+                        this.text=userName;
+                        receiver.push(userName);
+                    }
+                    else{
+                        this.value=this.text;
+                        this.text="";
+                        var key=receiver.indexOf(this.value);
+                        if(key!=-1){
+                            receiver.splice(key,1);
+                        }
+                    }
+
+                };
+                userList.appendChild(newNode);
+            }
+        }
+        function test() {
+            alert(receiver.join(','));
+        }
+
+    </script>
+</head>
+<body>
+<input type="button" value="连接服务器" onclick="connectSocket()"><br>
+<textarea name="" id="content" cols="30" rows="10"></textarea><br>
+<div id="userList">
+    <input type="button" value="已选择所有人" id="all" onclick="">
+</div>
+<input type="text" name="" id="userName"><input type="button" value="告诉大家我的名字" onclick="sendName()"><br>
+<input type="text" name="" id="message"><input type="button" value="发送" onclick="sendM()">
+<input type="button" value="断开" onclick="disConnect()">
+<input type="button" value="测试1" onclick="addUser('tom')">
+<input type="button" value="测试2" onclick="test()">
+</body>
+</html>
