@@ -46,7 +46,8 @@ do {
     } else {
         foreach ($read as $sock) {
             echo 'a new message ' . PHP_EOL;
-            socket_recv($sock, $data, 1000, 0);
+            //socket_recv($sock, $data, 1000, 0);
+            $data=socket_read($sock,1000);
             echo 'message strlen ' . strlen($data) . PHP_EOL;
             #长度小于7为断开连接
             if (strlen($data) < 7) {
