@@ -7,6 +7,9 @@
  * 简易web服务器
  * 分发html与php请求
  * 将php请求分发至127.0.0.1:9000处理
+ * 1 开始发送请求
+ * 2 发送参数
+ * 3 发送post数据 可无
  */
 
 $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
