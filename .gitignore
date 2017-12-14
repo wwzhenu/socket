@@ -1,6 +1,4 @@
-/.idea/*.xml
 /.vagrant
 *.txt
-*.xml
-*.html
-.idea
+.idea/
+1.html
