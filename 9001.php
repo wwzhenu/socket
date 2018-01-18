@@ -27,7 +27,12 @@ do{
         echo 'receive debug data'.PHP_EOL;
         if (empty($client))
             echo "wating for client".PHP_EOL;
-        else
+        else{
             socket_write($client,$data);
+            socket_recv($client,$getData,10000000,0);
+            if ($getData!==FALSE)
+                socket_write($get,$getData,strlen($getData));
+        }
+
     }
 }while(TRUE);
