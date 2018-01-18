@@ -8,7 +8,7 @@
 $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
 if ($socket === FALSE)
     die('socket_create fail');
-$ip = 'localhost';
+$ip = '0.0.0.0';
 $port = 9001;
 if (socket_bind($socket, $ip, $port) === FALSE)
     die('socket_bind fail');

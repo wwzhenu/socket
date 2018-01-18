@@ -7,8 +7,11 @@
  */
 $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
 $client = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
-socket_connect($socket, 'www.wanglovechu.com', 9002);
-socket_connect($client, 'localhost', 9001);
+if (!socket_connect($socket, 'www.wanglovechu.com', 9001))
+    echo '连接服务器失败';
+if(!socket_connect($client, 'localhost', 9001)){
+    echo '连接本地9001端口失败';
+}
 $data='wanglovechu';
 socket_write($socket, $data, strlen($data));
 do{
