@@ -42,7 +42,7 @@ do {
         $sockets[]=$read[] = $get;
         unset($read[array_search($socket, $read)]);
     } else {
-        foreach ($sockets as $sock) {
+        foreach ($read as $sock) {
             echo 'a new message ' . PHP_EOL;
             $data = socket_read($sock, 10000000000);
             foreach ($sockets as $wk => $w) {
