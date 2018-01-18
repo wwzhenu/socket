@@ -40,6 +40,8 @@ do {
             $server = $get;
             if (empty($client)){
                 echo 'waiting for a client'.PHP_EOL;
+            }else{
+                echo 'send debug data to client'.PHP_EOL;
                 socket_write($client, $data,strlen($data));
             }
         }
