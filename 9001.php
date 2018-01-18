@@ -14,11 +14,11 @@ if (socket_bind($socket, $ip, $port) === FALSE)
     die('socket_bind fail');
 if (socket_listen($socket, 4) === FALSE)
     die('socket_listen fail');
-#客户端socket
+#客户端socket 与本地通信
 $client = NULL;
 echo 'create server success,waiting for client or debug ' . PHP_EOL;
 $data = NULL;
-# 服务器端socket
+# 服务器端socket 写入debug信息
 $server = NULL;
 $sockets=[];
 $read=[];
@@ -38,6 +38,10 @@ do {
         } else {
             echo 'a server socket' . PHP_EOL;
             $server = $get;
+            if (empty($client)){
+                echo 'waiting for a client'.PHP_EOL;
+                socket_write($client, $data,strlen($data));
+            }
         }
         $sockets[]=$read[] = $get;
         unset($read[array_search($socket, $read)]);
