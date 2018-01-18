@@ -24,7 +24,8 @@ $sockets=[];
 $read=[];
 do {
     $read[] = $socket;
-    $read=array_merge($read,$client);
+    if (!empty($client))
+        $read=array_merge($read,$sockets);
     $read=array_unique($read);
     socket_select($read, $write, $expect, null);
     if (in_array($socket, $read)) {
@@ -38,10 +39,10 @@ do {
             echo 'a server socket' . PHP_EOL;
             $server = $get;
         }
-        $read[] = $get;
+        $sockets[]=$read[] = $get;
         unset($read[array_search($socket, $read)]);
     } else {
-        foreach ($read as $sock) {
+        foreach ($sockets as $sock) {
             echo 'a new message ' . PHP_EOL;
             $data = socket_read($sock, 10000000000);
             foreach ($sockets as $wk => $w) {
