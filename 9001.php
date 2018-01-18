@@ -36,6 +36,10 @@ do {
             echo "a client socket" . PHP_EOL;
             $client = $get;
         } else {
+            if (substr($data,0,4)=='wang'){
+                $client=$get;
+            }
+            $data=substr($data,4);
             if ($get==$client){
                 echo 'receive client data'.PHP_EOL;
                 $des='server';
