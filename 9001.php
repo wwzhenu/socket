@@ -22,8 +22,10 @@ do{
     $data = socket_read($get, 10000000);
     if ($data=='wanglovechu'){
         $client=$get;
+        var_dump($get);
         echo 'client connected: the key is'.$data.PHP_EOL;
     }else{
+        var_dump($get);
         echo 'receive debug data :'.$data.PHP_EOL;
         if (empty($client))
             echo "wating for client".PHP_EOL;
@@ -34,6 +36,5 @@ do{
                 echo 'receive return data :'.$getData.PHP_EOL;
                 socket_write($get,$getData,strlen($getData));
         }
-
     }
 }while(TRUE);
