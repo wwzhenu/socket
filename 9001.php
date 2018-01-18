@@ -24,9 +24,9 @@ $sockets=[];
 $read=[];
 do {
     $read[] = $socket;
-    if (!empty($client))
+    /*if (!empty($client))
         $read=array_merge($read,$sockets);
-    $read=array_unique($read);
+    $read=array_unique($read);*/
     socket_select($read, $write, $expect, null);
     if (in_array($socket, $read)) {
         echo 'a new connection ' . PHP_EOL;
@@ -36,18 +36,36 @@ do {
             echo "a client socket" . PHP_EOL;
             $client = $get;
         } else {
-            echo 'a server socket' . PHP_EOL;
-            $server = $get;
-            if (empty($client)){
-                echo 'waiting for a client'.PHP_EOL;
-            }else{
-                echo 'send debug data to client'.PHP_EOL;
-                socket_write($client, $data,strlen($data));
+            if ($get==$client){
+                echo 'receive client data'.PHP_EOL;
+                $des='server';
+            }else if($get==$server){
+                echo 'receive server data'.PHP_EOL;
+                $des='client';
+            }else if(empty($server)){
+                echo 'a server client'.PHP_EOL;
+                $server = $get;
+                $des='client';
+            }
+            if ($des=='client'){
+                if (empty($client)){
+                    echo 'waiting for a client'.PHP_EOL;
+                }else{
+                    echo 'send debug data to client'.PHP_EOL;
+                    socket_write($client, $data,strlen($data));
+                }
+            }else if($des=='server'){
+                if (empty($server)){
+                    echo 'waiting for a server'.PHP_EOL;
+                }else{
+                    echo 'send data to server'.PHP_EOL;
+                    socket_write($server, $data,strlen($data));
+                }
             }
         }
-        $sockets[]=$read[] = $get;
-        unset($read[array_search($socket, $read)]);
-    } else {
+        /*$sockets[]=$read[] = $get;
+        unset($read[array_search($socket, $read)]);*/
+    } /*else {
         foreach ($read as $sock) {
             echo 'a new message ' . PHP_EOL;
             $data = socket_read($sock, 10000000000);
@@ -56,5 +74,5 @@ do {
                     socket_write($w, $data,strlen($data));
             }
         }
-    }
+    }*/
 } while (1);
