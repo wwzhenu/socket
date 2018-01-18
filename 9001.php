@@ -21,6 +21,7 @@ $data = NULL;
 # 服务器端socket
 $server = NULL;
 $sockets=[];
+$read=[];
 do {
     $read[] = $socket;
     $read=array_merge($read,$client);
