@@ -22,6 +22,9 @@ $data = NULL;
 $server = NULL;
 $sockets=[];
 do {
+    $read[] = $socket;
+    $read=array_merge($read,$client);
+    $read=array_unique($read);
     socket_select($read, $write, $expect, null);
     if (in_array($socket, $read)) {
         echo 'a new connection ' . PHP_EOL;
