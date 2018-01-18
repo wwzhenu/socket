@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: wangwenzeng
  * Date: 2018/1/18
- * Time: 12:37
+ * Time: 15:13
  */
 $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
 if ($socket === FALSE)
