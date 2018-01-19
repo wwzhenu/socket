@@ -23,7 +23,7 @@ $server = NULL;
 $sockets = [];
 $read = [];
 do {
-    $read = [$socket, $mid];
+    $read = [$socket];
     /*if (!empty($client))
         $read=array_merge($read,$sockets);
     $read=array_unique($read);*/
