@@ -24,47 +24,41 @@ $sockets = [];
 $read = [];
 do {
     $read = [$socket];
-    /*if (!empty($client))
-        $read=array_merge($read,$sockets);
-    $read=array_unique($read);*/
-    socket_select($read, $write, $expect, null);
-    if (in_array($socket, $read)) {
-        echo 'a new connection ' . PHP_EOL;
-        $get = socket_accept($socket);
-        $data = socket_read($get, 10000000);
-        echo 'receive data' . PHP_EOL;
-        echo $data . PHP_EOL;
-        if (substr($data, 0, 3) == 'chu') {
-            $client = $get;
-            $data = substr($data, 3);
-            echo 'receive client data' . PHP_EOL;
-            $des = 'server';
-        } elseif ($get == $server) {
-            echo 'receive server data' . PHP_EOL;
-            $des = 'client';
-        } else if (empty($server)) {
-            echo 'a server client' . PHP_EOL;
-            $server = $get;
-            $des = 'client';
-        }
-        if ($des == 'client') {
-            if (empty($client)) {
-                echo 'waiting for a client' . PHP_EOL;
-            } else {
-                echo 'send debug data to client' . PHP_EOL;
-                socket_write($client, 'wang' . $data, strlen($data) + 4);
-            }
-        } else if ($des == 'server') {
-            if (empty($server)) {
-                echo 'waiting for a server' . PHP_EOL;
-            } else {
-                echo 'send data to server' . PHP_EOL;
-                socket_write($server, $data, strlen($data));
-            }
-        }
-    } elseif (in_array($mid, $read)) {
-        $get = socket_accept($mid);
-        $data = socket_read($sock, 1000000, 0);
-        socket_write($server, $data, strlen($data));
+    socket_recv($socket, $data, 1000000, 0);
+    echo 'a new connection ' . PHP_EOL;
+    $get = socket_accept($socket);
+    $data = socket_read($get, 10000000);
+    echo 'receive data' . PHP_EOL;
+    echo $data . PHP_EOL;
+    if ($data == 'wanglovechu'){
+        $client = $get;
+        break;
+    }elseif (substr($data, 0, 3) == 'chu') {
+        $client = $get;
+        $data = substr($data, 3);
+        echo 'receive client data' . PHP_EOL;
+        $des = 'server';
+    } elseif ($get == $server) {
+        echo 'receive server data' . PHP_EOL;
+        $des = 'client';
+    } else if (empty($server)) {
+        echo 'a server client' . PHP_EOL;
+        $server = $get;
+        $des = 'client';
     }
-} while (1);
+    if ($des == 'client') {
+        if (empty($client)) {
+            echo 'waiting for a client' . PHP_EOL;
+        } else {
+            echo 'send debug data to client' . PHP_EOL;
+            socket_write($client, 'wang' . $data, strlen($data) + 4);
+        }
+    } else if ($des == 'server') {
+        if (empty($server)) {
+            echo 'waiting for a server' . PHP_EOL;
+        } else {
+            echo 'send data to server' . PHP_EOL;
+            socket_write($server, $data, strlen($data));
+        }
+    }
+} while (1) ;
