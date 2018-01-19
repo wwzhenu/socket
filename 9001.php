@@ -23,32 +23,41 @@ $server = NULL;
 $sockets = [];
 $read = [$socket];
 do {
-    echo 'a new connection ' . PHP_EOL;
     socket_select($read, $w, $e, NULL);
     if (in_array($socket, $read)) {
+        echo 'a new connection ' . PHP_EOL;
         $get = socket_accept($socket);
         $data = socket_read($get, 10000000);
         echo 'receive data' . PHP_EOL;
         echo $data . PHP_EOL;
         if ($data == 'wanglovechu') {
+            echo 'a wanglovechu check' . PHP_EOL;
             $client = $get;
-            $read[]=$client;
+            $read[] = $client;
+            continue;
+        } elseif ($data == 'server') {
+            echo 'a server check' . PHP_EOL;
+            $backup = $get;
+            $read[] = $backup;
             continue;
         } elseif (substr($data, 0, 3) == 'chu') {
-            if ($client!=$get){
-                $client=$get;
-                $read=[$socket,$client];
+            echo 'receive chuxx data' . PHP_EOL;
+            if ($client != $get) {
+                $client = $get;
+                $read = [$socket, $client];
             }
             $data = substr($data, 3);
-            echo 'receive client data' . PHP_EOL;
             $des = 'server';
-        } elseif ($get == $server) {
-            echo 'receive server data' . PHP_EOL;
-            $des = 'client';
-        } else if (empty($server)) {
-            echo 'a server client' . PHP_EOL;
-            $server = $get;
-            $des = 'client';
+        } else {
+            if (!isset($server)){
+                echo 'a server client' . PHP_EOL;
+                $server = $get;
+                $des = 'client';
+            }else if ($get != $server) {
+                $server = $get;
+                echo 'receive server data' . PHP_EOL;
+                $des = 'client';
+            }
         }
         if ($des == 'client') {
             if (empty($client)) {
@@ -65,5 +74,13 @@ do {
                 socket_write($server, $data, strlen($data));
             }
         }
+    } else if (in_array($client, $read)) {
+        $data = socket_read($get, 10000000);
+        echo 'client data:'.PHP_EOL;
+        echo $data.PHP_EOL;
+    } else if (in_array($server, $read)) {
+        $data = socket_read($get, 10000000);
+        echo 'server data:'.PHP_EOL;
+        echo $data.PHP_EOL;
     }
 } while (1);
