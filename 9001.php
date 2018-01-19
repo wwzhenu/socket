@@ -38,12 +38,10 @@ do {
         } else {
             if (substr($data,0,4)=='wang'){
                 $client=$get;
-            }
-            $data=substr($data,4);
-            if ($get==$client){
+                $data=substr($data,4);
                 echo 'receive client data'.PHP_EOL;
                 $des='server';
-            }else if($get==$server){
+            }elseif($get==$server){
                 echo 'receive server data'.PHP_EOL;
                 $des='client';
             }else if(empty($server)){
@@ -56,7 +54,7 @@ do {
                     echo 'waiting for a client'.PHP_EOL;
                 }else{
                     echo 'send debug data to client'.PHP_EOL;
-                    socket_write($client, $data,strlen($data));
+                    socket_write($client, 'wang'.$data,strlen($data)+4);
                 }
             }else if($des=='server'){
                 if (empty($server)){
