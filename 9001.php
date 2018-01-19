@@ -75,11 +75,11 @@ do {
             }
         }
     } else if (in_array($client, $read)) {
-        $data = socket_read($get, 10000000);
+        $data = socket_read($client, 10000000);
         echo 'client data:'.PHP_EOL;
         echo $data.PHP_EOL;
     } else if (in_array($server, $read)) {
-        $data = socket_read($get, 10000000);
+        $data = socket_read($server, 10000000);
         echo 'server data:'.PHP_EOL;
         echo $data.PHP_EOL;
     }
