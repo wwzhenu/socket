@@ -23,8 +23,6 @@ $server = NULL;
 $sockets = [];
 $read = [];
 do {
-    $read = [$socket];
-    socket_recv($socket, $data, 1000000, 0);
     echo 'a new connection ' . PHP_EOL;
     $get = socket_accept($socket);
     $data = socket_read($get, 10000000);
