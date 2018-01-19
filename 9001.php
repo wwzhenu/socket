@@ -32,6 +32,8 @@ do {
         echo 'a new connection ' . PHP_EOL;
         $get = socket_accept($socket);
         $data = socket_read($get, 10000000);
+        echo 'receive data'.PHP_EOL;
+        echo $data.PHP_EOL;
         if ($data == 'wanglovechu') {
             echo "a client socket" . PHP_EOL;
             $client = $get;
