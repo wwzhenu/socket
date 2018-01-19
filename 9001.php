@@ -30,7 +30,7 @@ do {
     echo $data . PHP_EOL;
     if ($data == 'wanglovechu'){
         $client = $get;
-        break;
+        continue;
     }elseif (substr($data, 0, 3) == 'chu') {
         $client = $get;
         $data = substr($data, 3);
