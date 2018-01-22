@@ -6,4 +6,6 @@
  * Time: 15:21
  */
 $a=123123123;
+$b=$a.'abcdefg';
+$c='1asdf23123';
 echo 'here is php';
