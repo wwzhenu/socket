@@ -24,23 +24,31 @@ do{
     socket_select($read,$w,$e,NULL);
     foreach ($read as $s){
         if ($s==$socket){
+            echo 'a new  connection'.PHP_EOL;
             $get=socket_accept($s);
             $data=socket_read($get,10000000);
             # 收到客户端数据
             if ($data=='wang'){
+                echo 'client connect'.PHP_EOL;
                 $client=$get;
             }
             # 收到chrome数据
             else{
+                ECHO 'debug data'.PHP_EOL;
                 $server=$get;
                 if (isset($client))
                     socket_write($client,$data,strlen($data));
             }
+            echo $data.PHP_EOL;
         }else if($s==$client){
+            echo 'receive PHPstorm data'.PHP_EOL;
             $data=socket_read($s,10000000);
+            echo $data.PHP_EOL;
             socket_write($server,$data,strlen($data));
         }else if ($s==$server){
+            echo 'receive debug data'.PHP_EOL;
             $data=socket_read($s,10000000);
+            echo $data.PHP_EOL;
             socket_write($client,$data,strlen($data));
         }
     }
